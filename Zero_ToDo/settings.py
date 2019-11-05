@@ -79,7 +79,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'todoDB',
-        'HOST': '192.168.10.124',
+        'HOST': 'sn0wmine.f5.si',
         'USER': 'root',
         'PASSWORD': 'MineSqlPasswordLost',
     }
@@ -126,7 +126,7 @@ STATIC_URL = '/static/'
 
 #Setting login redirect address
 
-LOGIN_URL = '/'
+LOGIN_URL = 'home'
 LOGIN_REDIRECT_URL = 'zerotodo'
 LOGOUT_REDIRECT_URL = 'home'
 

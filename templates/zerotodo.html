@@ -1,10 +1,17 @@
+<!--This is zerotodo main pages-->
 <!DOCTYPE html>
+
+{% extends 'base.html'%}
+
+{%block content %}
+{%if user.is_authenticated %}
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
   <title>To Do List</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'style.css' %}">
+  <!--This source https://docs.djangoproject.com/ja/2.2/intro/tutorial06/-->
 
 </head>
 <body>
@@ -31,3 +38,8 @@
 
 </body>
 </html>
+{% else %}
+        <p>You are not logged in</p>
+        <a href="{% url 'login' %}">login</a>
+{% endif %}
+{% endblock %}
