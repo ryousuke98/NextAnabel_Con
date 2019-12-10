@@ -4,10 +4,25 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h2>Login</h2>
+{% load static %}
+<p class="fontsize1000">LayWorth</p>
+<div class="form-wrapper">
+<link rel="stylesheet" href="{% static 'Signin.css' %}">
+<h1>Login</h1>
+
 <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
+        <div class="form-item">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="button-panel">
+        <input type="submit" class="button" title="ログイン" value="ログイン"></input>
+            </div>
+        </div>
 </form>
+
+<div class="form-footer">
+    <p><a href="#">新しいアカウントを作る</a></p>
+    <p><a href="#">パスワードを忘れた</a></p>
+</div>
+</div>
 {% endblock %}

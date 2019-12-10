@@ -1,409 +1,80 @@
-/* TO DO LIST */
-  $(".tdl-new").bind('keypress', function(e){
-    var code = (e.keyCode ? e.keyCode : e.which);
-    if(code == 13) {
-      var v = $(this).val();
-      var s = v.replace(/ +?/g, '');
-      if (s == ""){
-        return false;
-      }else{
-        $(".tdl-content ul").append("<li><label><input type='checkbox'><i></i><span>"+ v +"</span><a href='#'>–</a></label></li>");
-        $(this).val("");
-      }
-    }
-  });
+class MenuLinks extends React.Component {
+  constructor(props) {
+    super(props);
+    // Any number of links can be added here
+    this.state = {
+      links: [{
+        text: 'Author',
+        link: 'https://github.com/Lakston',
+        icon: 'fa-pencil-square-o' },
+      {
+        text: 'Github page',
+        link: 'https://github.com/Lakston',
+        icon: 'fa-github' },
+      {
+        text: 'Twitter',
+        link: 'https://twitter.com/Fab_is_coding',
+        icon: 'fa-twitter' }] };
 
 
-  $(".tdl-content a").bind("click", function(){
-    var _li = $(this).parent().parent("li");
-        _li.addClass("remove").stop().delay(100).slideUp("fast", function(){
-          _li.remove();
-        });
-    return false;
-  });
-
-  // for dynamically created a tags
-  $(".tdl-content").on('click', "a", function(){
-    var _li = $(this).parent().parent("li");
-        _li.addClass("remove").stop().delay(100).slideUp("fast", function(){
-          _li.remove();
-        });
-    return false;
-  });
-
-
-
-
-
-
-
-!function() {
-
-  var today = moment();
-
-  function Calendar(selector, events) {
-    this.el = document.querySelector(selector);
-    this.events = events;
-    this.current = moment().date(1);
-    this.draw();
-    var current = document.querySelector('.today');
-    if(current) {
-      var self = this;
-      window.setTimeout(function() {
-        self.openDay(current);
-      }, 500);
-    }
   }
+  render() {
+    let links = this.state.links.map((link, i) => React.createElement("li", { ref: i + 1 }, React.createElement("i", { "aria-hidden": "true", className: `fa ${link.icon}` }), React.createElement("a", { href: link.link, target: "_blank" }, link.text)));
 
-  Calendar.prototype.draw = function() {
-    //Create Header
-    this.drawHeader();
+    return (
+      React.createElement("div", { className: this.props.menuStatus, id: "menu" },
+      React.createElement("ul", null,
+      links)));
 
-    //Draw Month
-    this.drawMonth();
 
-    this.drawLegend();
+
+  }}
+
+
+class Menu extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isOpen: false };
+
+    this._menuToggle = this._menuToggle.bind(this);
+    this._handleDocumentClick = this._handleDocumentClick.bind(this);
   }
-
-  Calendar.prototype.drawHeader = function() {
-    var self = this;
-    if(!this.header) {
-      //Create the header elements
-      this.header = createElement('div', 'header');
-      this.header.className = 'header';
-
-      this.title = createElement('h1');
-
-      var right = createElement('div', 'right');
-      right.addEventListener('click', function() { self.nextMonth(); });
-
-      var left = createElement('div', 'left');
-      left.addEventListener('click', function() { self.prevMonth(); });
-
-      //Append the Elements
-      this.header.appendChild(this.title); 
-      this.header.appendChild(right);
-      this.header.appendChild(left);
-      this.el.appendChild(this.header);
-    }
-
-    this.title.innerHTML = this.current.format('MMMM YYYY');
+  componentDidMount() {
+    document.addEventListener('click', this._handleDocumentClick, false);
   }
-
-  Calendar.prototype.drawMonth = function() {
-    var self = this;
-    
-    this.events.forEach(function(ev) {
-     ev.date = self.current.clone().date(Math.random() * (29 - 1) + 1);
-    });
-    
-    
-    if(this.month) {
-      this.oldMonth = this.month;
-      this.oldMonth.className = 'month out ' + (self.next ? 'next' : 'prev');
-      this.oldMonth.addEventListener('webkitAnimationEnd', function() {
-        self.oldMonth.parentNode.removeChild(self.oldMonth);
-        self.month = createElement('div', 'month');
-        self.backFill();
-        self.currentMonth();
-        self.fowardFill();
-        self.el.appendChild(self.month);
-        window.setTimeout(function() {
-          self.month.className = 'month in ' + (self.next ? 'next' : 'prev');
-        }, 16);
-      });
-    } else {
-        this.month = createElement('div', 'month');
-        this.el.appendChild(this.month);
-        this.backFill();
-        this.currentMonth();
-        this.fowardFill();
-        this.month.className = 'month new';
-    }
+  componentWillUnmount() {
+    document.removeEventListener('click', this._handleDocumentClick, false);
   }
+  _handleDocumentClick(e) {
+    if (!this.refs.root.contains(e.target) && this.state.isOpen === true) {
+      this.setState({
+        isOpen: false });
 
-  Calendar.prototype.backFill = function() {
-    var clone = this.current.clone();
-    var dayOfWeek = clone.day();
-
-    if(!dayOfWeek) { return; }
-
-    clone.subtract('days', dayOfWeek+1);
-
-    for(var i = dayOfWeek; i > 0 ; i--) {
-      this.drawDay(clone.add('days', 1));
-    }
+    };
   }
+  _menuToggle(e) {
+    e.stopPropagation();
+    this.setState({
+      isOpen: !this.state.isOpen });
 
-  Calendar.prototype.fowardFill = function() {
-    var clone = this.current.clone().add('months', 1).subtract('days', 1);
-    var dayOfWeek = clone.day();
-
-    if(dayOfWeek === 6) { return; }
-
-    for(var i = dayOfWeek; i < 6 ; i++) {
-      this.drawDay(clone.add('days', 1));
-    }
   }
+  render() {
+    let menuStatus = this.state.isOpen ? 'isopen' : '';
 
-  Calendar.prototype.currentMonth = function() {
-    var clone = this.current.clone();
-
-    while(clone.month() === this.current.month()) {
-      this.drawDay(clone);
-      clone.add('days', 1);
-    }
-  }
-
-  Calendar.prototype.getWeek = function(day) {
-    if(!this.week || day.day() === 0) {
-      this.week = createElement('div', 'week');
-      this.month.appendChild(this.week);
-    }
-  }
-
-  Calendar.prototype.drawDay = function(day) {
-    var self = this;
-    this.getWeek(day);
-
-    //Outer Day
-    var outer = createElement('div', this.getDayClass(day));
-    outer.addEventListener('click', function() {
-      self.openDay(this);
-    });
-
-    //Day Name
-    var name = createElement('div', 'day-name', day.format('ddd'));
-
-    //Day Number
-    var number = createElement('div', 'day-number', day.format('DD'));
+    return (
+      React.createElement("div", { ref: "root" },
+      React.createElement("div", { className: "menubar" },
+      React.createElement("div", { className: "hambclicker", onClick: this._menuToggle }),
+      React.createElement("div", { id: "hambmenu", className: menuStatus }, React.createElement("span", null), React.createElement("span", null), React.createElement("span", null), React.createElement("span", null)),
+      React.createElement("div", { className: "title" },
+      React.createElement("span", null, this.props.title))),
 
 
-    //Events
-    var events = createElement('div', 'day-events');
-    this.drawEvents(day, events);
-
-    outer.appendChild(name);
-    outer.appendChild(number);
-    outer.appendChild(events);
-    this.week.appendChild(outer);
-  }
-
-  Calendar.prototype.drawEvents = function(day, element) {
-    if(day.month() === this.current.month()) {
-      var todaysEvents = this.events.reduce(function(memo, ev) {
-        if(ev.date.isSame(day, 'day')) {
-          memo.push(ev);
-        }
-        return memo;
-      }, []);
-
-      todaysEvents.forEach(function(ev) {
-        var evSpan = createElement('span', ev.color);
-        element.appendChild(evSpan);
-      });
-    }
-  }
-
-  Calendar.prototype.getDayClass = function(day) {
-    classes = ['day'];
-    if(day.month() !== this.current.month()) {
-      classes.push('other');
-    } else if (today.isSame(day, 'day')) {
-      classes.push('today');
-    }
-    return classes.join(' ');
-  }
-
-  Calendar.prototype.openDay = function(el) {
-    var details, arrow;
-    var dayNumber = +el.querySelectorAll('.day-number')[0].innerText || +el.querySelectorAll('.day-number')[0].textContent;
-    var day = this.current.clone().date(dayNumber);
-
-    var currentOpened = document.querySelector('.details');
-
-    //Check to see if there is an open detais box on the current row
-    if(currentOpened && currentOpened.parentNode === el.parentNode) {
-      details = currentOpened;
-      arrow = document.querySelector('.arrow');
-    } else {
-      //Close the open events on differnt week row
-      //currentOpened && currentOpened.parentNode.removeChild(currentOpened);
-      if(currentOpened) {
-        currentOpened.addEventListener('webkitAnimationEnd', function() {
-          currentOpened.parentNode.removeChild(currentOpened);
-        });
-        currentOpened.addEventListener('oanimationend', function() {
-          currentOpened.parentNode.removeChild(currentOpened);
-        });
-        currentOpened.addEventListener('msAnimationEnd', function() {
-          currentOpened.parentNode.removeChild(currentOpened);
-        });
-        currentOpened.addEventListener('animationend', function() {
-          currentOpened.parentNode.removeChild(currentOpened);
-        });
-        currentOpened.className = 'details out';
-      }
-
-      //Create the Details Container
-      details = createElement('div', 'details in');
-
-      //Create the arrow
-      var arrow = createElement('div', 'arrow');
-
-      //Create the event wrapper
-
-      details.appendChild(arrow);
-      el.parentNode.appendChild(details);
-    }
-
-    var todaysEvents = this.events.reduce(function(memo, ev) {
-      if(ev.date.isSame(day, 'day')) {
-        memo.push(ev);
-      }
-      return memo;
-    }, []);
-
-    this.renderEvents(todaysEvents, details);
-
-    arrow.style.left = el.offsetLeft - el.parentNode.offsetLeft + 27 + 'px';
-  }
-
-  Calendar.prototype.renderEvents = function(events, ele) {
-    //Remove any events in the current details element
-    var currentWrapper = ele.querySelector('.events');
-    var wrapper = createElement('div', 'events in' + (currentWrapper ? ' new' : ''));
-
-    events.forEach(function(ev) {
-      var div = createElement('div', 'event');
-      var square = createElement('div', 'event-category ' + ev.color);
-      var span = createElement('span', '', ev.eventName);
-
-      div.appendChild(square);
-      div.appendChild(span);
-      wrapper.appendChild(div);
-    });
-
-    if(!events.length) {
-      var div = createElement('div', 'event empty');
-      var span = createElement('span', '', 'No Events');
-
-      div.appendChild(span);
-      wrapper.appendChild(div);
-    }
-
-    if(currentWrapper) {
-      currentWrapper.className = 'events out';
-      currentWrapper.addEventListener('webkitAnimationEnd', function() {
-        currentWrapper.parentNode.removeChild(currentWrapper);
-        ele.appendChild(wrapper);
-      });
-      currentWrapper.addEventListener('oanimationend', function() {
-        currentWrapper.parentNode.removeChild(currentWrapper);
-        ele.appendChild(wrapper);
-      });
-      currentWrapper.addEventListener('msAnimationEnd', function() {
-        currentWrapper.parentNode.removeChild(currentWrapper);
-        ele.appendChild(wrapper);
-      });
-      currentWrapper.addEventListener('animationend', function() {
-        currentWrapper.parentNode.removeChild(currentWrapper);
-        ele.appendChild(wrapper);
-      });
-    } else {
-      ele.appendChild(wrapper);
-    }
-  }
-
-  Calendar.prototype.drawLegend = function() {
-    var legend = createElement('div', 'legend');
-    var calendars = this.events.map(function(e) {
-      return e.calendar + '|' + e.color;
-    }).reduce(function(memo, e) {
-      if(memo.indexOf(e) === -1) {
-        memo.push(e);
-      }
-      return memo;
-    }, []).forEach(function(e) {
-      var parts = e.split('|');
-      var entry = createElement('span', 'entry ' +  parts[1], parts[0]);
-      legend.appendChild(entry);
-    });
-    this.el.appendChild(legend);
-  }
-
-  Calendar.prototype.nextMonth = function() {
-    this.current.add('months', 1);
-    this.next = true;
-    this.draw();
-  }
-
-  Calendar.prototype.prevMonth = function() {
-    this.current.subtract('months', 1);
-    this.next = false;
-    this.draw();
-  }
-
-  window.Calendar = Calendar;
-
-  function createElement(tagName, className, innerText) {
-    var ele = document.createElement(tagName);
-    if(className) {
-      ele.className = className;
-    }
-    if(innerText) {
-      ele.innderText = ele.textContent = innerText;
-    }
-    return ele;
-  }
-}();
-
-!function() {
-  var data = [
-   　
-    { eventName: '10～873ページ', calendar: '英単語', color: 'orange' },
-    
-  ];
-
-  
-
-  function addDate(ev) {
-    
-  }
-
-  var calendar = new Calendar('#calendar', data);
-
-}();
-
- /* TO DO LIST */
-  $(".tdl-new").bind('keypress', function(e){
-    var code = (e.keyCode ? e.keyCode : e.which);
-    if(code == 13) {
-      var v = $(this).val();
-      var s = v.replace(/ +?/g, '');
-      if (s == ""){
-        return false;
-      }else{
-        $(".tdl-content ul").append("<li><label><input type='checkbox'><i></i><span>"+ v +"</span><a href='#'>–</a></label></li>");
-        $(this).val("");
-      }
-    }
-  });
+      React.createElement(MenuLinks, { menuStatus: menuStatus })));
 
 
-  $(".tdl-content a").bind("click", function(){
-    var _li = $(this).parent().parent("li");
-        _li.addClass("remove").stop().delay(100).slideUp("fast", function(){
-          _li.remove();
-        });
-    return false;
-  });
+  }}
 
-  // for dynamically created a tags
-  $(".tdl-content").on('click', "a", function(){
-    var _li = $(this).parent().parent("li");
-        _li.addClass("remove").stop().delay(100).slideUp("fast", function(){
-          _li.remove();
-        });
-    return false;
-  });
+
+ReactDOM.render(React.createElement(Menu, { title: "Lay Worth" }), document.getElementById('app'));

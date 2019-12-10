@@ -79,7 +79,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'todoDB',
-        'HOST': 'sn0wmine.f5.si',
+        'HOST': 'ik1-304-12171.vs.sakura.ne.jp',
         'USER': 'root',
         'PASSWORD': 'MineSqlPasswordLost',
     }
@@ -127,10 +127,10 @@ STATIC_URL = '/static/'
 #Setting login redirect address
 
 LOGIN_URL = 'home'
-LOGIN_REDIRECT_URL = 'zerotodo'
+LOGIN_REDIRECT_URL = 'layworth'
 LOGOUT_REDIRECT_URL = 'home'
 
 STATICFILES_DIRS = [
 os.path.join(BASE_DIR, "static"),
-#This source https://qiita.com/yama04070319/items/ecad710d9a5d2c1dfa1b 
+#This source https://qiita.com/yama04070319/items/ecad710d9a5d2c1dfa1b
 ]

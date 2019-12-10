@@ -21,6 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')), #added! because required for login
     path('',TemplateView.as_view(template_name='home.html'), name='home'),  #add
-    path('zerotodo/',TemplateView.as_view(template_name='zerotodo.html'), name='zerotodo'),  #add
+    path('layworth/',TemplateView.as_view(template_name='main.html'), name='layworth'),  #add
    # path('static/',TemplateView.as_view(template_name='static/'), name='static'),  #add
     ]
